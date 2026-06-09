@@ -9,7 +9,7 @@ const authService = {
         localStorage.setItem("token", data.token); 
         localStorage.setItem("usuario", JSON.stringify(data.usuario)); 
         return data;
-    }   
+    },
 
     // Registrar usuario
     async register(nombre, email, password, rol = "entrevistador") {
@@ -25,7 +25,7 @@ const authService = {
 
     // Usuario guardado
     getUsuarioGuardado() {    
-    const userLog = localStorage.getItem("usuario")    .
+    const userLog = localStorage.getItem("usuario")    
     return userLog ? JSON.parse(raw) : null  
     },
 
