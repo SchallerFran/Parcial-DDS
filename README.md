@@ -8,7 +8,7 @@ El sistema permite administrar postulantes, entrevistadores y entrevistas, aplic
 
 # Integrantes
 
-* Nombre Apellido
+* Francisco Schaller | 98707
 * Nombre Apellido
 * Nombre Apellido
 
