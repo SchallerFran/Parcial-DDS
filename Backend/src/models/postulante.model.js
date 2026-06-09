@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize'
-import sequelize from '../config/db.js'
+import {sequelize} from '../config/db.js'
 
 export const Postulante = sequelize.define('Postulante', {
   id:           { type: DataTypes.STRING, primaryKey: true, unique: true },

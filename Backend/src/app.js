@@ -1,8 +1,5 @@
 import {sequelize} from "./db/db.js";
-import { Usuario } from "./model/usuario.js";
-import { Postulante } from "./model/postulante.js";
-import { HistorialEntrevista } from "./model/historialEntrevista.js";
-import { Entrevista } from "./model/entrevista.js";
+import { Usuario, HistorialEntrevista, Postulante, Entrevista } from "./models";
 
 const main = async () => {
     await sequelize.sync();
