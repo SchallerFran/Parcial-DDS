@@ -434,24 +434,22 @@ Casos cubiertos:
 # Estructura del Proyecto
 
 ```text
-backend/
-├── src
-│   ├── routes
-│   ├── controllers
-│   ├── services
-│   ├── middlewares
-│   ├── repositories
-│   ├── data
-│   └── tests
-
-frontend/
-├── src
-│   ├── pages
-│   ├── components
-│   ├── services
-│   ├── context
-│   ├── hooks
-│   └── routes
+Proyecto
+├───Backend
+│   ├───src
+│   │   ├───controllers
+│   │   ├───middlewares
+│   │   ├───models
+│   │   ├───routes
+│   │   └───services
+│   └───tests
+├───Frontend
+│   └───src
+│       ├───components
+│       ├───context
+│       ├───pages
+│       ├───router
+│       └───services
 ```
 
 ---
