@@ -9,7 +9,7 @@ El sistema permite administrar postulantes, entrevistadores y entrevistas, aplic
 # Integrantes
 
 * Francisco Schaller | 98707
-* Nombre Apellido
+* Fatima Vaca | 94588
 * Nombre Apellido
 
 ---
