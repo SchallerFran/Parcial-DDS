@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize'
-import sequelize from '../config/db.js'
+import {sequelize} from '../config/db.js'
 
 export const HistorialEntrevista = sequelize.define('HistorialEntrevista', {
   id: { type: DataTypes.STRING, primaryKey: true, unique: true },

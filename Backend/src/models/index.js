@@ -4,7 +4,6 @@ import { Postulante } from './postulante.model.js'
 import { Entrevista } from './entrevista.model.js'
 import { HistorialEntrevista } from './historialEntrevista.model.js'
 
-
 Usuario.hasMany(Entrevista, { foreignKey: 'entrevistadorId' })
 Entrevista.belongsTo(Usuario, { foreignKey: 'entrevistadorId', as: 'entrevistador' })
 Postulante.hasMany(Entrevista, { foreignKey: 'postulanteId' })
