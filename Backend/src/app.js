@@ -1,25 +1,19 @@
-import {sequelize} from "./db/db.js";
-import { Usuario, HistorialEntrevista, Postulante, Entrevista } from "./models";
+import express from 'express'
+import cors from 'cors'
+import authRoutes from './routes/auth.routes.js'
+import postulanteRoutes from './routes/postulante.routes.js'
+import entrevistaRoutes from './routes/entrevista.routes.js'
+import errorsMiddleware from './middlewares/errors.middleware.js'
 
-const main = async () => {
-    await sequelize.sync();
-    console.log('Conexion establecida');
+const app = express()
 
-    // Consulta todos los usuarios de la db (Select * from Usuario)
-    const usuarios = await Usuario.findAll();
+app.use(cors())
+app.use(express.json())
 
-    // Busca un usuario por su id (Select * from Usuario where id = 2) y lo modifica y lo guarda (Update Usuario set apellido = 'Gomez' where id = 2)
-    const usuarioAModificar = await Usuario.findByPk(2);
-    if (usuarioAModificar) {
-        usuarioAModificar.apellido = 'Gomez';
-        await usuarioAModificar.save();
-    }
-    
-    // Elimina un usuario por su id (Delete from Usuario where id = 1)
-    const usuarioAEliminar = await Usuario.findByPk(1);
-    if (usuarioAEliminar) {
-        await usuarioAEliminar.destroy();
-    }
-} 
+app.use('/api/auth', authRoutes)
+app.use('/api/postulantes', postulanteRoutes)
+app.use('/api/entrevistas', entrevistaRoutes)
 
-main();
+app.use(errorsMiddleware)
+
+export default app

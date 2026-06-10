@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt'
-import { Usuario } from '../models'
+import { Usuario } from '../models/index.js'
 
 const listar = async (filtros = {}) => {
   return Usuario.findAll({
