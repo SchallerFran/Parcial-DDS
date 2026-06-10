@@ -1,4 +1,4 @@
-import api from "../config/axio"
+import api from "../config/axios"
 
 const postulantesService = {
     // Listar todos los postulantes

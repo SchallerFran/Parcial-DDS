@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import { useAuth } from "../context/AuthContext"
 import { useAsync } from "../hooks/useAsync"
-import api from "../config/axio"
+import api from "../config/axios"
 
 export default function EntrevistasPage() {
     const { usuario, puedeGestionar } = useAuth()
