@@ -18,6 +18,8 @@ export default function AppRouter() {
     const { estaAutenticado } = useAuth()
 
     return (
+        <>
+        {estaAutenticado && <Navbar />}
             <Routes>
                 {/* Redirección raíz */}
                 <Route path="/" element={
@@ -72,5 +74,6 @@ export default function AppRouter() {
                 {/* Comodín — SIEMPRE al final */}
                 <Route path="*" element={<NotFound />} />
             </Routes>
+        </>
     )
 }
