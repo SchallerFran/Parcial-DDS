@@ -7,7 +7,6 @@ export default function App() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      {estaAutenticado && <Navbar />}
       <main style={{ flex: 1 }}>
         <AppRouter />
       </main>

@@ -1,6 +1,7 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
+import { Routes, Route, Navigate } from "react-router-dom"
 import ProtectedRoute from "../components/ProtectedRoute"
 import { useAuth } from "../context/AuthContext"
+import Navbar from "../components/Navbar"
 
 // Páginas públicas
 import LoginPage from "../pages/LoginPage"
@@ -17,7 +18,6 @@ export default function AppRouter() {
     const { estaAutenticado } = useAuth()
 
     return (
-        <BrowserRouter>
             <Routes>
                 {/* Redirección raíz */}
                 <Route path="/" element={
@@ -72,6 +72,5 @@ export default function AppRouter() {
                 {/* Comodín — SIEMPRE al final */}
                 <Route path="*" element={<NotFound />} />
             </Routes>
-        </BrowserRouter>
     )
 }
