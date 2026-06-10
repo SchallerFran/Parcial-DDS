@@ -14,6 +14,7 @@ El sistema permite administrar postulantes, entrevistadores y entrevistas, aplic
 | Fatima Vaca | 94588 |
 | Lautaro Tobias Diaz | 94528 |
 | Walter Rueda | 407718 |
+| Andrés Bisio | 65193 |
 
 ---
 
