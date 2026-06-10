@@ -46,4 +46,4 @@ const desactivar = async (id) => {
   return usuario.update({ activo: false })
 }
 
-export { listar, obtenerPorId, listarEntrevistadores, crear, actualizar, desactivar }
+export default { listar, obtenerPorId, listarEntrevistadores, crear, actualizar, desactivar }

@@ -25,4 +25,10 @@ const login = async ({ email, password }) => {
   return { token, usuario: { id: usuario.id, nombre: usuario.nombre, rol: usuario.rol } }
 }
 
-module.exports = { registrar, login }
+export default {
+  registrar,
+  passwordHash,
+  login,
+  ok,
+  token
+}

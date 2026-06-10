@@ -24,4 +24,4 @@ const eliminar = async (id) => {
   await postulante.destroy()
 }
 
-export { listar, obtenerPorId, crear, actualizar, eliminar }
+export default { listar, obtenerPorId, crear, actualizar, eliminar }
