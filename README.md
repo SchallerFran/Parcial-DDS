@@ -10,7 +10,7 @@ El sistema permite administrar postulantes, entrevistadores y entrevistas, aplic
 
 * Francisco Schaller | 98707
 * Fatima Vaca | 94588
-* Nombre Apellido
+* Lautaro Tobias Diaz | 94528
 
 ---
 
