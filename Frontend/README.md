@@ -1,16 +1,103 @@
-# React + Vite
+# 🚀 Frontend - Agenda de Entrevistas DDS
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 📋 Descripción
 
-Currently, two official plugins are available:
+Frontend React + Vite para la aplicación de agenda de entrevistas. Incluye autenticación, routing protegido, formularios con validaciones, listado con filtros y navegación completa.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+**Estado:** ✅ Listo para integración con backend
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🔧 Requisitos
 
-## Expanding the ESLint configuration
+- Node.js 18+
+- npm 9+
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 📦 Instalación
+
+```bash
+cd Frontend
+npm install
+```
+
+---
+
+## 🏃 Ejecución
+
+### Desarrollo
+```bash
+npm run dev
+```
+Abre: `http://localhost:5173`
+
+### Build
+```bash
+npm run build
+```
+
+---
+
+## 🧪 Credenciales de Prueba (MOCK)
+
+```
+Email:    fati@test.com
+Password: 123456
+```
+
+---
+
+## 📁 Estructura
+
+```
+src/
+├── components/          # ProtectedRoute, Navbar
+├── config/              # axio.jsx (Axios configurado)
+├── context/             # AuthContext (estado global)
+├── hooks/               # useAsync
+├── pages/               # Login, Register, Entrevistas, etc.
+├── routes/              # AppRouter
+├── services/            # auth, entrevistas, postulantes
+└── App.jsx, main.jsx
+```
+
+---
+
+## 🛣️ Rutas
+
+- `/login` - Autenticación
+- `/registro` - Registro
+- `/entrevistas` - Listado (protegido)
+- `/entrevistas/:id` - Detalle (protegido)
+- `/entrevistas/crear` - Crear (protegido, solo admin/rrhh)
+- `/resumen` - Dashboard (protegido, solo admin/rrhh)
+
+---
+
+## ✅ Funcionalidades
+
+- ✅ Autenticación y registro
+- ✅ Routing protegido por rol
+- ✅ CRUD de entrevistas (UI + servicios listos)
+- ✅ Filtros en listado
+- ✅ Validaciones de formularios
+- ✅ LocalStorage persistencia
+- ✅ Navbar con logout
+
+---
+
+## 🔌 Backend
+
+Configurar en `src/config/axio.jsx`:
+```javascript
+baseURL: "http://localhost:3000/api"
+```
+
+Servicios listos para consumir endpoints.
+
+---
+
+**Responsable:** Fati  
+**Última actualización:** 9 de junio 2026  
+**Estado:** ✅ Listo para integración

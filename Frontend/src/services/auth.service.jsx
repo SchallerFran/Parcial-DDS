@@ -1,4 +1,4 @@
-import api from "../config/axios";
+import api from "../config/axio";
 
 const authService = {
     // Iniciar sesion
@@ -25,8 +25,8 @@ const authService = {
 
     // Usuario guardado
     getUsuarioGuardado() {    
-    const userLog = localStorage.getItem("usuario")    
-    return userLog ? JSON.parse(raw) : null  
+        const userLog = localStorage.getItem("usuario")    
+        return userLog ? JSON.parse(userLog) : null  
     },
 
     // Token y autenticacion
