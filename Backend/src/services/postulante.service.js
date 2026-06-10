@@ -1,7 +1,31 @@
-import { Postulante } from '../models'
+import { Postulante } from '../models/index.js'
 
-const listar = async (filtros = {}) => {
-  return Postulante.findAll({ where: filtros })
+const listar = async ({
+  estado,
+  puesto,
+  page = 1,
+  limit = 10,
+  sortBy = 'nombre',
+  order = 'ASC'
+} = {}) => {
+  const where = {}
+  if (estado) where.estado = estado
+  if (puesto) where.puesto = puesto
+
+  const result = await Postulante.findAndCountAll({
+    where,
+    order: [[sortBy, order]],
+    limit: Number(limit),
+    offset: (Number(page) - 1) * Number(limit)
+  })
+
+  return {
+    total: result.count,
+    page: Number(page),
+    limit: Number(limit),
+    totalPages: Math.ceil(result.count / Number(limit)),
+    data: result.rows
+  }
 }
 
 const obtenerPorId = async (id) => {

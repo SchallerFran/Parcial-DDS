@@ -1,205 +1,212 @@
 # Sistema de Gestión de Entrevistas
 
-Aplicación web Full Stack desarrollada para la materia **Desarrollo de Software (DDS) - UTN FRC**, destinada a la gestión integral de entrevistas laborales.
+Aplicación web Full Stack desarrollada para la materia **Diseño de Sistemas (DDS) - UTN FRC**, destinada a la gestión integral de entrevistas laborales.
 
-El sistema permite administrar postulantes, entrevistadores y entrevistas, aplicando reglas de negocio reales como validación de disponibilidad, control de estados, permisos por rol e historial de cambios.
-
----
-
-# Integrantes
-
-* Francisco Schaller | 98707
-* Fatima Vaca | 94588
-* Lautaro Tobias Diaz | 94528
-* Walter Rueda | 407718
+El sistema permite administrar postulantes, entrevistadores y entrevistas, aplicando reglas de negocio como validación de disponibilidad horaria, control de estados, permisos por rol e historial de auditoría.
 
 ---
 
-# Tecnologías Utilizadas
+## Integrantes
 
-## Backend
-
-* Node.js
-* Express
-* JWT (JSON Web Tokens)
-* bcrypt
-* Jest
-* Supertest
-
-## Frontend
-
-* React
-* Vite
-* React Router
-* Axios
-
-## Persistencia
-
-* JSON / SQLite / Sequelize (según implementación)
+| Nombre | Legajo |
+| --- | --- |
+| Francisco Schaller | 98707 |
+| Fatima Vaca | 94588 |
+| Lautaro Tobias Diaz | 94528 |
+| Walter Rueda | 407718 |
 
 ---
 
-# Funcionalidades Implementadas
+## Tecnologías
 
-## Autenticación
-
-* Registro de usuarios
-* Inicio de sesión
-* Generación de JWT
-* Persistencia de sesión en frontend
-* Autorización basada en roles
-
-### Roles
-
-#### Admin / RRHH
-
-Puede:
-
-* Crear entrevistas
-* Editar entrevistas
-* Reprogramar entrevistas
-* Cancelar entrevistas
-* Ver todas las entrevistas
-* Acceder al panel de resumen
-
-#### Entrevistador
-
-Puede:
-
-* Ver entrevistas asignadas
-* Marcar entrevistas como realizadas
-* Agregar observaciones
+| Capa | Stack |
+| --- | --- |
+| Backend | Node.js, Express, Sequelize, SQLite |
+| Autenticación | JWT (jsonwebtoken), bcrypt |
+| Testing | Jest, Supertest |
+| Frontend | React, Vite, React Router |
 
 ---
 
-# Entidades
+## Instrucciones de ejecución
 
-## Usuarios
+### Requisitos previos
 
-| Campo        | Descripción                 |
-| ------------ | --------------------------- |
-| id           | Identificador               |
-| nombre       | Nombre completo             |
-| email        | Correo electrónico          |
-| passwordHash | Contraseña hasheada         |
-| rol          | entrevistador, rrhh o admin |
-| activo       | Estado del usuario          |
+- Node.js v18 o superior
 
-## Postulantes
+### Backend
 
-| Campo    | Descripción                              |
-| -------- | ---------------------------------------- |
-| id       | Identificador                            |
-| nombre   | Nombre                                   |
-| apellido | Apellido                                 |
-| email    | Correo                                   |
-| telefono | Teléfono                                 |
-| puesto   | Puesto aplicado                          |
-| estado   | nuevo, en_proceso, rechazado, contratado |
+```bash
+cd Backend
+npm install
+```
 
-## Entrevistas
+Crear el archivo `.env` en la carpeta `Backend/`:
 
-| Campo           | Descripción                                    |
-| --------------- | ---------------------------------------------- |
-| id              | Identificador                                  |
-| postulanteId    | Postulante asociado                            |
-| entrevistadorId | Entrevistador asignado                         |
-| fecha           | Fecha                                          |
-| horaInicio      | Hora de inicio                                 |
-| horaFin         | Hora de finalización                           |
-| modalidad       | presencial o virtual                           |
-| ubicacionLink   | Ubicación física o enlace                      |
-| estado          | programada, realizada, cancelada, reprogramada |
-| observaciones   | Comentarios                                    |
+```env
+JWT_SECRET=clave_secreta_super_segura
+PORT=3000
+```
 
-## Historial de Entrevistas
+Crear las tablas en la base de datos (solo la primera vez):
 
-Registra auditoría de:
+```bash
+npm run sync
+```
 
-* Creaciones
-* Ediciones
-* Reprogramaciones
-* Cancelaciones
-* Realizaciones
+Iniciar el servidor:
+
+```bash
+npm run dev
+```
+
+El servidor queda disponible en `http://localhost:3000`.
+
+### Frontend
+
+```bash
+cd Frontend
+npm install
+npm run dev
+```
+
+La aplicación queda disponible en `http://localhost:5173`.
 
 ---
 
-# Reglas de Negocio
+## Usuarios de prueba
 
-## Validación de Horarios
+Los usuarios se crean llamando al endpoint `POST /api/auth/register`. Se sugieren los siguientes:
 
-No se permite crear o reprogramar entrevistas cuando:
+**Usuario RRHH / admin:**
 
-* horaInicio >= horaFin
+```json
+{
+  "nombre": "Admin RRHH",
+  "email": "admin@dds.com",
+  "password": "admin123",
+  "rol": "rrhh"
+}
+```
+
+**Usuario entrevistador:**
+
+```json
+{
+  "nombre": "Entrevistador",
+  "email": "entrevistador@dds.com",
+  "password": "entrevistador123",
+  "rol": "entrevistador"
+}
+```
+
+---
+
+## Endpoints principales
+
+Todas las rutas excepto `/api/auth/*` requieren el header:
+
+```
+Authorization: Bearer <token>
+```
+
+### Autenticación (públicos)
+
+| Método | Ruta | Descripción |
+| --- | --- | --- |
+| POST | `/api/auth/register` | Registrar usuario |
+| POST | `/api/auth/login` | Iniciar sesión — devuelve `{ token, usuario }` |
+
+### Postulantes
+
+| Método | Ruta | Roles | Descripción |
+| --- | --- | --- | --- |
+| GET | `/api/postulantes` | todos | Listar postulantes |
+| GET | `/api/postulantes/:id` | todos | Detalle de postulante |
+| POST | `/api/postulantes` | rrhh, admin | Crear postulante |
+| PUT | `/api/postulantes/:id` | rrhh, admin | Editar postulante |
+| DELETE | `/api/postulantes/:id` | admin | Eliminar postulante |
+
+### Entrevistas
+
+| Método | Ruta | Roles | Descripción |
+| --- | --- | --- | --- |
+| GET | `/api/entrevistas` | todos | Listar con filtros opcionales |
+| GET | `/api/entrevistas/resumen` | todos | Dashboard con estadísticas |
+| GET | `/api/entrevistas/:id` | todos | Detalle de entrevista |
+| GET | `/api/entrevistas/:id/historial` | todos | Historial de cambios |
+| POST | `/api/entrevistas` | rrhh, admin | Crear entrevista |
+| PUT | `/api/entrevistas/:id` | rrhh, admin | Editar entrevista |
+| PATCH | `/api/entrevistas/:id/reprogramar` | rrhh, admin | Reprogramar |
+| PATCH | `/api/entrevistas/:id/cancelar` | rrhh, admin | Cancelar |
+| PATCH | `/api/entrevistas/:id/realizar` | entrevistador, rrhh, admin | Marcar como realizada |
+
+**Filtros disponibles en `GET /api/entrevistas`:**
+
+```
+?fecha=YYYY-MM-DD
+&estado=programada|realizada|cancelada|reprogramada
+&entrevistadorId=1
+&postulanteId=post-001
+&page=1
+&limit=10
+&sortBy=fecha
+&order=ASC|DESC
+```
+
+---
+
+## Rutas frontend
+
+| Ruta | Descripción |
+| --- | --- |
+| `/login` | Inicio de sesión |
+| `/register` | Registro de usuario |
+| `/entrevistas` | Listado de entrevistas |
+| `/entrevistas/:id` | Detalle de entrevista |
+| `/entrevistas/nueva` | Alta de entrevista |
+| `/entrevistas/:id/editar` | Edición de entrevista |
+| `/entrevistas/:id/reprogramar` | Reprogramación de entrevista |
+| `/resumen` | Dashboard administrativo |
+| `*` | Página no encontrada |
+
+---
+
+## Reglas de negocio
+
+### Validación de superposición por entrevistador
+
+Un entrevistador no puede tener dos entrevistas que se solapen en fecha y horario. Se consideran bloqueantes únicamente las entrevistas en estado `programada` o `reprogramada`.
+
+La superposición se detecta con la condición:
+```
+inicio_existente < fin_nueva  AND  fin_existente > inicio_nueva
+```
 
 Ejemplo:
 
-❌ 15:00 - 15:00
+| Entrevista existente | Solicitud | Resultado |
+| --- | --- | --- |
+| 14:00 — 15:00 | 14:30 — 15:30 | ❌ Superposición |
+| 14:00 — 15:00 | 15:00 — 16:00 | ✅ Permitido |
+| 14:00 — 15:00 | 13:00 — 14:00 | ✅ Permitido |
 
-❌ 16:00 - 15:00
+Esta validación aplica tanto al **crear** como al **reprogramar**.
 
-✅ 15:00 - 16:00
+### Estados del postulante
 
----
+Solo se pueden crear entrevistas para postulantes en estado `nuevo` o `en_proceso`.
 
-## Validación de Superposición
+| Estado | Puede entrevistarse |
+| --- | --- |
+| nuevo | ✅ |
+| en_proceso | ✅ |
+| rechazado | ❌ |
+| contratado | ❌ |
 
-Un entrevistador no puede tener dos entrevistas superpuestas el mismo día.
+### Flujo de estados de la entrevista
 
-Se consideran bloqueantes las entrevistas:
-
-* programada
-* reprogramada
-
-Ejemplo:
-
-Entrevista existente:
-
-14:00 - 15:00
-
-No se permite:
-
-14:30 - 15:30
-
-Sí se permite:
-
-15:00 - 16:00
-
----
-
-## Validación de Estado del Postulante
-
-Solo pueden entrevistarse postulantes en:
-
-* nuevo
-* en_proceso
-
-No se permite crear entrevistas para:
-
-* rechazado
-* contratado
-
----
-
-## Validación de Modalidad
-
-### Virtual
-
-Debe incluir:
-
-* Link de reunión
-
-### Presencial
-
-Debe incluir:
-
-* Ubicación física
-
----
-
-## Flujo de Estados
-
-```text
+```
 programada
  ├──► realizada
  ├──► cancelada
@@ -208,281 +215,74 @@ programada
            └──► cancelada
 ```
 
-Las entrevistas realizadas no pueden modificarse, excepto sus observaciones.
+Las entrevistas `realizadas` no pueden modificarse, excepto el campo `observaciones`.
+
+### Validación de modalidad
+
+| Modalidad | Campo obligatorio |
+| --- | --- |
+| presencial | `ubicacion` |
+| virtual | `link` |
 
 ---
 
-# Endpoints Principales
+## Seguridad: JWT, roles y permisos
 
-## Autenticación
+### Autenticación
 
-### POST /api/auth/register
+El backend valida el JWT en cada request protegido mediante el middleware `auth.middleware.js`. El token debe enviarse en el header:
 
-Registrar usuario.
-
-### POST /api/auth/login
-
-Iniciar sesión.
-
----
-
-## Postulantes
-
-### GET /api/postulantes
-
-Listar postulantes.
-
----
-
-## Entrevistas
-
-### GET /api/entrevistas
-
-Listado con filtros.
-
-Parámetros:
-
-```http
-?fecha=
-&estado=
-&entrevistadorId=
-&postulanteId=
-&page=
-&limit=
-&sortBy=
-&order=
 ```
-
-### GET /api/entrevistas/:id
-
-Detalle de entrevista.
-
-### GET /api/entrevistas/:id/historial
-
-Historial de cambios.
-
-### GET /api/entrevistas/resumen
-
-Panel resumen administrativo.
-
-### POST /api/entrevistas
-
-Crear entrevista.
-
-### PUT /api/entrevistas/:id
-
-Editar entrevista.
-
-### PATCH /api/entrevistas/:id/cancelar
-
-Cancelar entrevista.
-
-### PATCH /api/entrevistas/:id/realizar
-
-Marcar entrevista como realizada.
-
-### PATCH /api/entrevistas/:id/reprogramar
-
-Reprogramar entrevista.
-
----
-
-# Rutas Frontend
-
-| Ruta                         | Descripción              |
-| ---------------------------- | ------------------------ |
-| /login                       | Inicio de sesión         |
-| /register                    | Registro                 |
-| /entrevistas                 | Listado                  |
-| /entrevistas/:id             | Detalle                  |
-| /entrevistas/nueva           | Alta                     |
-| /entrevistas/:id/editar      | Edición                  |
-| /entrevistas/:id/reprogramar | Reprogramación           |
-| /resumen                     | Dashboard administrativo |
-| *                            | Página no encontrada     |
-
----
-
-# Usuarios de Prueba
-
-## Administrador
-
-```text
-Email: admin@dds.com
-Password: admin123
-```
-
-## Entrevistador
-
-```text
-Email: entrevistador@dds.com
-Password: entrevistador123
-```
-
----
-
-# Instalación
-
-## Backend
-
-```bash
-cd backend
-npm install
-npm run dev
-```
-
-Servidor:
-
-```text
-http://localhost:3000
-```
-
----
-
-## Frontend
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Aplicación:
-
-```text
-http://localhost:5173
-```
-
----
-
-# Variables de Entorno
-
-## Backend (.env)
-
-```env
-PORT=3000
-JWT_SECRET=mi_clave_secreta
-```
-
----
-
-# Seguridad
-
-## JWT
-
-Las rutas protegidas requieren:
-
-```http
 Authorization: Bearer <token>
 ```
 
----
+Si el token está ausente o es inválido, la respuesta es `401 Unauthorized`.
 
-## Respuestas de Seguridad
+### Autorización por rol
 
-### 401 Unauthorized
+Luego de autenticar, el middleware `roles.middleware.js` verifica que el rol del usuario esté dentro de los roles permitidos para esa ruta. Si no tiene permiso, la respuesta es `403 Forbidden`.
 
-Usuario sin token.
+El payload del JWT contiene `{ id, rol, nombre }` y tiene vigencia de **8 horas**.
 
-Ejemplo:
-
-```json
-{
-  "error": "Token requerido"
-}
-```
-
-### 403 Forbidden
-
-Usuario autenticado sin permisos.
-
-Ejemplo:
-
-```json
-{
-  "error": "No posee permisos para realizar esta acción"
-}
-```
+| Respuesta | Causa |
+| --- | --- |
+| `401` | Sin token o token inválido/expirado |
+| `403` | Token válido pero rol insuficiente |
 
 ---
 
-# Testing
+## Pruebas
 
-Ejecutar pruebas:
+Las pruebas se ejecutan desde la carpeta `Backend/`:
 
 ```bash
+cd Backend
 npm test
 ```
 
-Casos cubiertos:
+Cobertura de los 10 casos requeridos:
 
-* Login válido
-* Login inválido
-* Listado de entrevistas
-* Filtros
-* Detalle existente
-* Detalle inexistente
-* Creación válida
-* Horario inválido
-* Superposición de entrevistas
-* Falta de JWT
-* Rol insuficiente
-* Reprogramación inválida
-* Modalidad sin datos requeridos
-
----
-
-# Estructura del Proyecto
-
-```text
-Proyecto
-├───Backend
-│   ├───src
-│   │   ├───controllers
-│   │   ├───middlewares
-│   │   ├───models
-│   │   ├───routes
-│   │   └───services
-│   └───tests
-├───Frontend
-│   └───src
-│       ├───components
-│       ├───context
-│       ├───pages
-│       ├───router
-│       └───services
-```
+| # | Caso | Archivo |
+| --- | --- | --- |
+| 1 | Login correcto e inválido | `auth.test.js` |
+| 2 | Listado de entrevistas con y sin filtros | `entrevistas.test.js` |
+| 3 | Detalle de entrevista existente e inexistente | `entrevistas.test.js` |
+| 4 | Creación válida de entrevista | `entrevistas.test.js` |
+| 5 | Creación inválida por horario inconsistente | `entrevistas.test.js` |
+| 6 | Creación inválida por superposición | `entrevistas.test.js` |
+| 7 | Acceso sin JWT a ruta protegida | `auth.test.js` |
+| 8 | Acceso con JWT de entrevistador a ruta de rrhh/admin | `auth.test.js` |
+| 9 | Reprogramación inválida por superposición | `entrevistas.test.js` |
+| 10 | Modalidad virtual sin link / presencial sin ubicación | `entrevistas.test.js` |
 
 ---
 
-# Datos Semilla
+## Limitaciones conocidas
 
-El sistema incluye:
-
-* 3 entrevistadores
-* 1 administrador/RRHH
-* 8 postulantes
-* 12 entrevistas
-* Historial inicial de acciones
-
----
-
-# Limitaciones Conocidas
-
-* La persistencia se realiza mediante JSON/SQLite y no contempla concurrencia distribuida.
-* No se implementó recuperación de contraseña.
-* No se implementó notificación por correo electrónico.
-* El sistema está orientado al alcance académico solicitado por la cátedra.
-
----
-
-# Decisiones de Diseño
-
-* Las reglas de negocio se centralizan en la capa de servicios.
-* Las validaciones se ejecutan tanto en frontend como en backend.
-* El backend es la fuente de verdad para todas las restricciones del dominio.
-* El historial de entrevistas permite trazabilidad completa de modificaciones.
-* La autorización se implementa mediante JWT y control de roles.
-
-```
-```
+- **Frontend incompleto:** solo existe el archivo `main.jsx`. Las rutas listadas en esta documentación corresponden al diseño planeado pero aún no implementado.
+- **IDs manuales:** los modelos `Entrevista`, `Postulante` e `HistorialEntrevista` usan `id` de tipo `STRING` sin generación automática. El cliente debe proveer el ID al crear (o se debe agregar un generador UUID en el servicio).
+- **Sin datos semilla:** no existe un script de seed. Los usuarios y postulantes deben crearse manualmente via API antes de poder crear entrevistas.
+- **Concurrencia:** SQLite no soporta escrituras concurrentes. El sistema no es apto para múltiples instancias simultáneas.
+- **Sin recuperación de contraseña:** no se implementó flujo de reset de password.
+- **Sin notificaciones:** no se implementó envío de emails al programar o reprogramar entrevistas.
+- **Scope académico:** el sistema está orientado al alcance definido por la cátedra.
