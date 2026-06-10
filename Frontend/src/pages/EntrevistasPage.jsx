@@ -48,12 +48,6 @@ export default function EntrevistasPage() {
         setFiltros({ ...filtros, [name]: value })
     }
 
-    const filtroAplicado = entrevistas.filter((ent) => {
-        if (filtros.fecha && ent.fecha !== filtros.fecha) return false
-        if (filtros.estado && ent.estado !== filtros.estado) return false
-        if (filtros.entrevistadorId && ent.entrevistadorId !== parseInt(filtros.entrevistadorId)) return false
-        return true
-    })
 
     return (
         <div style={{ padding: "2rem" }}>
@@ -124,7 +118,7 @@ export default function EntrevistasPage() {
             </div>
 
             {/* Listado */}
-            {filtroAplicado.length === 0 ? (
+            {entrevistas.length === 0 ? (
                 <p>No hay entrevistas que coincidan con los filtros.</p>
             ) : (
                 <table style={{ width: "100%", borderCollapse: "collapse" }}>
@@ -140,7 +134,7 @@ export default function EntrevistasPage() {
                         </tr>
                     </thead>
                     <tbody>
-                        {filtroAplicado.map((ent) => (
+                        {entrevistas.map((ent) => (
                             <tr key={ent.id} style={{ borderBottom: "1px solid #dee2e6" }}>
                                 <td style={{ padding: "1rem" }}>
                                     {ent.postulante.nombre} {ent.postulante.apellido}
