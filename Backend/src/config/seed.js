@@ -1,8 +1,9 @@
 import bcrypt from 'bcrypt'
-import { sequelize, Usuario, Postulante, Entrevista } from '../models/index.js'
+import { sequelize, Usuario, Postulante, Entrevista, HistorialEntrevista } from '../models/index.js'
 
 try {
-  await sequelize.sync()
+  // For seed we recreate tables to ensure a fresh state
+  await sequelize.sync({ force: true })
 
   const admin = await Usuario.create({
     nombre: 'Admin',
@@ -47,8 +48,8 @@ try {
   const postulantes = await Postulante.bulkCreate([
     { id: 'post-001', nombre: 'Juan', apellido: 'Martínez', email: 'juan@mail.com', telefono: '11111111', puesto: 'Frontend Junior', estado: 'nuevo' },
     { id: 'post-002', nombre: 'María', apellido: 'López', email: 'maria@mail.com', telefono: '22222222', puesto: 'Backend Junior', estado: 'nuevo' },
-    { id: 'post-003', nombre: 'Carlos', apellido: 'García', email: 'carlos@mail.com', telefono: '33333333', puesto: 'QA Trainee', estado: 'nuevo' },
-    { id: 'post-004', nombre: 'Ana', apellido: 'Díaz', email: 'ana@mail.com', telefono: '44444444', puesto: 'Full Stack Jr', estado: 'nuevo' },
+    { id: 'post-003', nombre: 'Carlos', apellido: 'García', email: 'carlos@mail.com', telefono: '33333333', puesto: 'QA Trainee', estado: 'rechazado' },
+    { id: 'post-004', nombre: 'Ana', apellido: 'Díaz', email: 'ana@mail.com', telefono: '44444444', puesto: 'Full Stack Jr', estado: 'contratado' },
     { id: 'post-005', nombre: 'Luciano', apellido: 'Santos', email: 'luciano@mail.com', telefono: '55555555', puesto: 'Backend Jr', estado: 'en_proceso' },
     { id: 'post-006', nombre: 'Sofía', apellido: 'Castro', email: 'sofia.castro@mail.com', telefono: '66666666', puesto: 'UX Designer', estado: 'en_proceso' },
     { id: 'post-007', nombre: 'Marina', apellido: 'Fernández', email: 'marina@mail.com', telefono: '77777777', puesto: 'Frontend Jr', estado: 'nuevo' },
@@ -215,6 +216,20 @@ try {
     }
   ])
   console.log(`✓ ${entrevistas.length} entrevistas creadas`)
+
+  // Crear registros de historial de forma secuencial para evitar colisiones
+  for (const entrevista of entrevistas) {
+    await HistorialEntrevista.create({
+      entrevistaId: entrevista.id,
+      usuarioId: admin.id,
+      accion: 'creación',
+      fechaHora: new Date().toISOString(),
+      valorAnterior: null,
+      valorNuevo: JSON.stringify(entrevista.toJSON())
+    })
+  }
+
+  console.log(`✓ ${entrevistas.length} registros de historial creados`)
 
   console.log('Seed completado exitosamente')
   process.exit(0)
