@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react"
 import { useParams, useNavigate, Link } from "react-router-dom"
 import { useAuth } from "../context/AuthContext"
+import entrevistasService from "../services/entrevistas.service"
+import postulantesService from "../services/postulantes.service"
+import usuariosService from "../services/usuarios.service"
 
 export default function EntrevistaForm() {
     const { id } = useParams()
@@ -21,34 +24,53 @@ export default function EntrevistaForm() {
     })
 
     const [errores, setErrores] = useState({})
+    const [postulantes, setPostulantes] = useState([])
+    const [entrevistadores, setEntrevistadores] = useState([])
+    const [cargandoDatos, setCargandoDatos] = useState(true)
+    const [guardando, setGuardando] = useState(false)
+    const [errorCarga, setErrorCarga] = useState(null)
 
-    // Datos simulados
-    const postulantes = [
-        { id: 1, nombre: "Juan Martínez", estado: "nuevo" },
-        { id: 2, nombre: "María López", estado: "en_proceso" },
-        { id: 3, nombre: "Carlos García", estado: "nuevo" },
-    ]
-
-    const entrevistadores = [
-        { id: 1, nombre: "Sofía Luna" },
-        { id: 2, nombre: "Pedro Ruiz" },
-    ]
+    useEffect(() => {
+        const cargarDatos = async () => {
+            setCargandoDatos(true)
+            setErrorCarga(null)
+            try {
+                const [resPostulantes, resEntrevistadores] = await Promise.all([
+                    postulantesService.listar(),
+                    usuariosService.listarEntrevistadores()
+                ])
+                setPostulantes(resPostulantes.data ?? resPostulantes)
+                setEntrevistadores(resEntrevistadores)
+            } catch (err) {
+                setErrorCarga("Error al cargar datos del formulario")
+            } finally {
+                setCargandoDatos(false)
+            }
+        }
+        cargarDatos()
+    }, [])
 
     useEffect(() => {
         if (esEdicion) {
-            // Simulación: cargar datos del formulario
-            const entrevista = {
-                postulanteId: "1",
-                entrevistadorId: "1",
-                fecha: "2026-06-18",
-                horaInicio: "14:00",
-                horaFin: "14:45",
-                modalidad: "presencial",
-                ubicacion: "Sala 2",
-                link: "",
-                observaciones: "",
+            const cargarEntrevista = async () => {
+                try {
+                    const data = await entrevistasService.obtener(id)
+                    setForm({
+                        postulanteId: String(data.postulanteId ?? ""),
+                        entrevistadorId: String(data.entrevistadorId ?? ""),
+                        fecha: data.fecha ?? "",
+                        horaInicio: data.horaInicio ?? "",
+                        horaFin: data.horaFin ?? "",
+                        modalidad: data.modalidad ?? "presencial",
+                        ubicacion: data.ubicacion ?? "",
+                        link: data.link ?? "",
+                        observaciones: data.observaciones ?? "",
+                    })
+                } catch (err) {
+                    setErrorCarga("Error al cargar la entrevista")
+                }
             }
-            setForm(entrevista)
+            cargarEntrevista()
         }
     }, [id, esEdicion])
 
@@ -83,22 +105,43 @@ export default function EntrevistaForm() {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+        if (!validar()) return
 
-        if (!validar()) {
-            return
-        }
-
+        setGuardando(true)
         try {
-            // Aquí irá la llamada a la API
-            console.log("Formulario enviado:", form)
+            const payload = {
+                ...form,
+                postulanteId: Number(form.postulanteId),
+                entrevistadorId: Number(form.entrevistadorId),
+            }
+            if (esEdicion) {
+                await entrevistasService.editar(id, payload)
+            } else {
+                await entrevistasService.crear(payload)
+            }
             navigate("/entrevistas")
         } catch (err) {
-            console.error("Error:", err)
+            setErrores({ general: err.response?.data?.error || "Error al guardar la entrevista" })
+        } finally {
+            setGuardando(false)
         }
     }
 
     if (!puedeGestionar) {
         return <div style={{ padding: "2rem" }}>No tienes permiso para acceder a esta página</div>
+    }
+
+    if (cargandoDatos) {
+        return <div style={{ padding: "2rem" }}>Cargando formulario...</div>
+    }
+
+    if (errorCarga) {
+        return (
+            <div style={{ padding: "2rem" }}>
+                <p style={{ color: "red" }}>{errorCarga}</p>
+                <Link to="/entrevistas" style={{ color: "#007bff" }}>← Volver</Link>
+            </div>
+        )
     }
 
     return (
@@ -189,6 +232,7 @@ export default function EntrevistaForm() {
                 </div>
 
                 {errores.horario && <p style={{ color: "red", marginBottom: "1rem" }}>{errores.horario}</p>}
+                {errores.general && <p style={{ color: "red", marginBottom: "1rem" }}>{errores.general}</p>}
 
                 <div style={{ marginBottom: "1rem" }}>
                     <label htmlFor="modalidad">Modalidad: *</label>
@@ -251,17 +295,18 @@ export default function EntrevistaForm() {
                 <div style={{ display: "flex", gap: "1rem" }}>
                     <button
                         type="submit"
+                        disabled={guardando}
                         style={{
                             flex: 1,
                             padding: "0.75rem",
-                            backgroundColor: "#007bff",
+                            backgroundColor: guardando ? "#6c757d" : "#007bff",
                             color: "white",
                             border: "none",
                             borderRadius: "4px",
-                            cursor: "pointer",
+                            cursor: guardando ? "not-allowed" : "pointer",
                         }}
                     >
-                        {esEdicion ? "Guardar cambios" : "Crear entrevista"}
+                        {guardando ? "Guardando..." : esEdicion ? "Guardar cambios" : "Crear entrevista"}
                     </button>
                     <button
                         type="button"

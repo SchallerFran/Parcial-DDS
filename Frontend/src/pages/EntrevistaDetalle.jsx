@@ -1,59 +1,47 @@
 import { useParams, useNavigate, Link } from "react-router-dom"
 import { useState, useEffect } from "react"
 import { useAuth } from "../context/AuthContext"
+import entrevistasService from "../services/entrevistas.service"
 
 export default function EntrevistaDetalle() {
     const { id } = useParams()
     const navigate = useNavigate()
     const { usuario, puedeGestionar } = useAuth()
-
-    // Simulación de datos hasta que el backend esté listo
     const [entrevista, setEntrevista] = useState(null)
+    const [cargando, setCargando] = useState(true)
+    const [error, setError] = useState(null)
 
     useEffect(() => {
-        // Simulación: buscar en datos locales
-        const entrevistas = [
-            {
-                id: 1,
-                postulanteId: 1,
-                postulante: { id: 1, nombre: "Juan", apellido: "Martínez", email: "juan@mail.com", puesto: "Frontend Junior", estado: "nuevo" },
-                entrevistadorId: 1,
-                entrevistador: { id: 1, nombre: "Sofía", email: "sofia@test.com" },
-                fecha: "2026-06-18",
-                horaInicio: "14:00",
-                horaFin: "14:45",
-                modalidad: "presencial",
-                ubicacion: "Sala 2",
-                estado: "programada",
-                observaciones: "",
-            },
-            {
-                id: 2,
-                postulanteId: 2,
-                postulante: { id: 2, nombre: "María", apellido: "López", email: "maria@mail.com", puesto: "Backend Junior", estado: "en_proceso" },
-                entrevistadorId: 1,
-                entrevistador: { id: 1, nombre: "Sofía", email: "sofia@test.com" },
-                fecha: "2026-06-19",
-                horaInicio: "10:00",
-                horaFin: "10:45",
-                modalidad: "virtual",
-                link: "https://meet.google.com/abc-defg-hij",
-                estado: "realizada",
-                observaciones: "Buen desempeño técnico",
-            },
-        ]
-
-        const found = entrevistas.find((e) => e.id === parseInt(id))
-        if (found) {
-            setEntrevista(found)
-        } else {
-            // Redirigir a 404
-            navigate("/no-encontrado")
+        const cargar = async () => {
+            setCargando(true)
+            setError(null)
+            try {
+                const data = await entrevistasService.obtener(id)
+                setEntrevista(data)
+            } catch (err) {
+                setError("No se pudo cargar la entrevista")
+            } finally {
+                setCargando(false)
+            }
         }
-    }, [id, navigate])
+        cargar()
+    }, [id])
+
+    if (cargando) {
+        return <div style={{ padding: "2rem" }}>Cargando...</div>
+    }
+
+    if (error) {
+        return (
+            <div style={{ padding: "2rem" }}>
+                <p style={{ color: "red" }}>{error}</p>
+                <Link to="/entrevistas" style={{ color: "#007bff" }}>← Volver a listado</Link>
+            </div>
+        )
+    }
 
     if (!entrevista) {
-        return <div style={{ padding: "2rem" }}>Cargando...</div>
+        return <div style={{ padding: "2rem" }}>Entrevista no encontrada</div>
     }
 
     return (

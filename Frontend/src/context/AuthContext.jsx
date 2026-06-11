@@ -3,59 +3,40 @@ import authService from "../services/auth.service"
 
 const AuthContext = createContext(null)
 
-// Usuario mock para probar sin backend
-const USUARIO_MOCK = {
-    id: 1,
-    nombre: "Fati",
-    email: "fati@test.com",
-    rol: "admin"
-}
 
 export function AuthProvider({ children }) {
     const [usuario, setUsuario] = useState(() => authService.getUsuarioGuardado())
     const [cargando, setCargando] = useState(false)
     const [error, setError] = useState(null)
 
+    //Login
     const login = async (email, password) => {
         setCargando(true)
         setError(null)
         try {
-        // --- MOCK: borrar cuando el backend esté listo ---
-        if (email === "fati@test.com" && password === "123456") {
-            localStorage.setItem("token", "token-mock-123")
-            localStorage.setItem("usuario", JSON.stringify(USUARIO_MOCK))
-            setUsuario(USUARIO_MOCK)
-            return USUARIO_MOCK
-        }
-        throw { mensaje: "Email o contraseña incorrectos" }
-        // --- fin MOCK ---
-
-        // const data = await authService.login(email, password)
-        // setUsuario(data.usuario)
-        // return data
+            const data = await authService.login(email, password)
+            setUsuario(data.usuario)
+            return data
         } catch (err) {
-        setError(err.mensaje || "Error al iniciar sesión")
-        throw err
-        } finally {
-        setCargando(false)
-        }
-    }
-
-    const register = async (nombre, email, password, rol) => {
-        setCargando(true)
-        setError(null)
-        try {
-            // --- MOCK: borrar cuando el backend esté listo ---
-            return { mensaje: "Usuario registrado correctamente" }
-            // --- fin MOCK ---
-
-            // return await authService.register(nombre, email, password, rol)
-        } catch (err) {
-            setError(err.mensaje || "Error al registrarse")
+            setError(err.mensaje || "Email o contraseña incorrectos")
             throw err
         } finally {
             setCargando(false)
         }
+    }
+
+    //Regiter
+    const register = async (nombre, email, password, rol) => {
+    setCargando(true)
+    setError(null)
+    try {
+        return await authService.register(nombre, email, password, rol)
+    } catch (err) {
+        setError(err.mensaje || "Error al registrarse")
+        throw err
+    } finally {
+        setCargando(false)
+    }
     }
 
     const logout = () => {
