@@ -48,12 +48,25 @@ const validarSuperposicion = async ({ entrevistadorId, fecha, horaInicio, horaFi
     }
 }
 
+const generarSiguienteIdEntrevista = async () => {
+    const entrevistas = await Entrevista.findAll({ attributes: ['id'] })
+    const numeros = entrevistas
+        .map(e => {
+            const match = e.id?.match(/(\d+)$/)
+            return match ? Number(match[1]) : NaN
+        })
+        .filter(Number.isFinite)
+
+    const maxNumero = numeros.length ? Math.max(...numeros) : 0
+    return `ent-${String(maxNumero + 1).padStart(3, '0')}`
+}
+
 const registrarHistorial = async ({ entrevistaId, usuarioId, accion, valorAnterior, valorNuevo }) => {
     return HistorialEntrevista.create({
         entrevistaId,
         usuarioId,
         accion,
-        fechaHora: new Date(),
+        fechaHora: new Date().toISOString(),
         valorAnterior: valorAnterior ? JSON.stringify(valorAnterior) : null,
         valorNuevo: valorNuevo ? JSON.stringify(valorNuevo) : null
     })
@@ -172,7 +185,10 @@ export const crear = async (datos, usuarioId) => {
         throw { status: 400, message: 'El usuario asignado no tiene rol de entrevistador' }
     }
 
+    const id = await generarSiguienteIdEntrevista()
+
     const entrevista = await Entrevista.create({
+        id,
         postulanteId, entrevistadorId, fecha,
         horaInicio, horaFin, modalidad,
         ubicacion, link, observaciones,

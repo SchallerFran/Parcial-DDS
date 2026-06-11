@@ -11,9 +11,11 @@ export const HistorialEntrevista = sequelize.define('HistorialEntrevista', {
   valorNuevo:    { type: DataTypes.STRING, allowNull: true }
 }, {
   hooks: {
-    beforeCreate: async (registro) => {
-      const count = await HistorialEntrevista.count()
-      registro.id = `hist-${String(count + 1).padStart(3, '0')}`
+    beforeValidate: async (registro) => {
+      if (!registro.id) {
+        const count = await HistorialEntrevista.count()
+        registro.id = `hist-${String(count + 1).padStart(3, '0')}`
+      }
     }
   }
 })

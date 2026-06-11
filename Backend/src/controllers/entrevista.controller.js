@@ -38,6 +38,7 @@ const resumen = async (req, res, next) => {
 
 const crear = async (req, res, next) => {
     try {
+        // El servicio genera el ID, pero nos aseguramos de que siempre llegue uno
         const entrevista = await entrevistaService.crear(req.body, req.usuario.id)
         res.status(201).json(entrevista)
     } catch (err) {
