@@ -2,6 +2,8 @@ import { useState, useEffect } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { useAuth } from "../context/AuthContext"
 import entrevistasService from "../services/entrevistas.service"
+import usuariosService from "../services/usuarios.service"
+import postulantesService from "../services/postulantes.service"
 
 export default function EntrevistasPage() {
     const { puedeGestionar } = useAuth()
@@ -17,8 +19,24 @@ export default function EntrevistasPage() {
         page: 1, limit: 10, sortBy: "fecha", order: "ASC"
     })
 
+    const [listaEntrevistadores, setListaEntrevistadores] = useState([])
+    const [listaPostulantes, setListaPostulantes] = useState([])
+
     useEffect(() => {
-        cargar()
+        const cargarDatos = async () => {
+            cargar()
+            try {
+                const [evs, posts] = await Promise.all([
+                    usuariosService.listarEntrevistadores(),
+                    postulantesService.listar()
+                ])
+                setListaEntrevistadores(evs)
+                setListaPostulantes(posts.data ?? posts)
+            } catch (e) {
+                // no bloquear si fallan
+            }
+        }
+        cargarDatos()
     }, [filtros])
 
     const cargar = async () => {
@@ -78,7 +96,19 @@ export default function EntrevistasPage() {
             <option value="cancelada">Cancelada</option>
             </select>
             
-            <input type="text" name="entrevistadorId" value={filtros.entrevistadorId} onChange={handleFiltro} placeholder="ID Entrevistador" style={{ width: "auto" }} />
+            <select name="entrevistadorId" value={filtros.entrevistadorId} onChange={handleFiltro} style={{ width: "auto" }}>
+                <option value="">Entrevistador (todos)</option>
+                {listaEntrevistadores.map(u => (
+                <option key={u.id} value={u.id}>{u.nombre} {u.apellido ?? ''}</option>
+                ))}
+            </select>
+
+            <select name="postulanteId" value={filtros.postulanteId} onChange={handleFiltro} style={{ width: "auto" }}>
+                <option value="">Postulante (todos)</option>
+                {listaPostulantes.map(p => (
+                <option key={p.id} value={p.id}>{p.nombre} {p.apellido ?? ''}</option>
+                ))}
+            </select>
             
             <button 
             onClick={limpiarFiltros} 

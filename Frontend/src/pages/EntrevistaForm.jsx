@@ -111,9 +111,9 @@ export default function EntrevistaForm() {
         try {
             const payload = {
                 ...form,
-                postulanteId: Number(form.postulanteId),
                 entrevistadorId: Number(form.entrevistadorId),
             }
+                console.log('[DEBUG] Payload antes de enviar:', JSON.stringify(payload, null, 2))
             if (esEdicion) {
                 await entrevistasService.editar(id, payload)
             } else {
@@ -121,7 +121,10 @@ export default function EntrevistaForm() {
             }
             navigate("/entrevistas")
         } catch (err) {
-            setErrores({ general: err.response?.data?.error || "Error al guardar la entrevista" })
+            const errorMsg = err.response?.data?.error || "Error al guardar la entrevista"
+            const detalles = err.response?.data?.detalles || []
+            const mensajeCompleto = detalles.length > 0 ? `${errorMsg}: ${detalles.join(', ')}` : errorMsg
+            setErrores({ general: mensajeCompleto })
         } finally {
             setGuardando(false)
         }
@@ -170,9 +173,15 @@ export default function EntrevistaForm() {
                         <label htmlFor="postulanteId">Postulante: *</label>
                         <select id="postulanteId" name="postulanteId" value={form.postulanteId} onChange={handleChange}>
                             <option value="">Seleccionar postulante...</option>
-                            {postulantes.map((p) => (
-                                <option key={p.id} value={p.id}>{p.nombre} ({p.estado})</option>
-                            ))}
+
+                                {postulantes
+                                .filter(p => p.estado === "en_proceso")
+                                .map((p) => (
+                                    <option key={p.id} value={p.id}>
+                                    {p.nombre} ({p.estado})
+                                    </option>
+                                ))}
+
                         </select>
                         {errores.postulanteId && <span style={{ color: "#991B1B", fontSize: "0.85rem" }}>{errores.postulanteId}</span>}
                     </div>
