@@ -134,40 +134,59 @@ export default function EntrevistaDetalle() {
                 )}
             </div>
 
-            {puedeGestionar && (
-                <div style={{ display: "flex", gap: "1rem" }}>
-                    <Link
-                        to={`/entrevistas/${entrevista.id}/editar`}
-                        style={{
-                            padding: "0.75rem 1.5rem",
-                            backgroundColor: "#ffc107",
-                            color: "black",
-                            textDecoration: "none",
-                            borderRadius: "4px",
-                        }}
-                    >
-                        Editar
-                    </Link>
-                    <button
-                        onClick={() => {
-                            if (window.confirm("¿Deseas cancelar esta entrevista?")) {
-                                console.log("Entrevista cancelada")
-                                navigate("/entrevistas")
-                            }
-                        }}
-                        style={{
-                            padding: "0.75rem 1.5rem",
-                            backgroundColor: "#dc3545",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "4px",
-                            cursor: "pointer",
-                        }}
-                    >
-                        Cancelar
-                    </button>
-                </div>
-            )}
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
+                <a
+                    href={`/entrevistas/${entrevista.id}/historial`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                        padding: "0.75rem 1.5rem",
+                        backgroundColor: "#0d6efd",
+                        color: "white",
+                        textDecoration: "none",
+                        borderRadius: "4px",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center"
+                    }}
+                >
+                    Ver historial
+                </a>
+                {puedeGestionar && (
+                    <>
+                        <Link
+                            to={`/entrevistas/${entrevista.id}/editar`}
+                            style={{
+                                padding: "0.75rem 1.5rem",
+                                backgroundColor: "#ffc107",
+                                color: "black",
+                                textDecoration: "none",
+                                borderRadius: "4px",
+                            }}
+                        >
+                            Editar
+                        </Link>
+                        <button
+                            onClick={() => {
+                                if (window.confirm("¿Deseas cancelar esta entrevista?")) {
+                                    console.log("Entrevista cancelada")
+                                    navigate("/entrevistas")
+                                }
+                            }}
+                            style={{
+                                padding: "0.75rem 1.5rem",
+                                backgroundColor: "#dc3545",
+                                color: "white",
+                                border: "none",
+                                borderRadius: "4px",
+                                cursor: "pointer",
+                            }}
+                        >
+                            Cancelar
+                        </button>
+                    </>
+                )}
+            </div>
         </div>
     )
 }

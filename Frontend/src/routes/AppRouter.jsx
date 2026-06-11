@@ -12,6 +12,7 @@ import NotFound from "../pages/NotFound"
 import EntrevistasPage from "../pages/EntrevistasPage"
 import EntrevistaDetalle from "../pages/EntrevistaDetalle"
 import EntrevistaForm from "../pages/EntrevistaForm"
+import HistorialEntrevista from "../pages/HistorialEntrevista"
 import ResumenPage from "../pages/ResumenPage"
 
 export default function AppRouter() {
@@ -48,6 +49,10 @@ export default function AppRouter() {
 
                 <Route path="/entrevistas/:id" element={
                 <ProtectedRoute><EntrevistaDetalle /></ProtectedRoute>
+                } />
+
+                <Route path="/entrevistas/:id/historial" element={
+                <ProtectedRoute><HistorialEntrevista /></ProtectedRoute>
                 } />
 
                 <Route path="/entrevistas/:id/editar" element={
