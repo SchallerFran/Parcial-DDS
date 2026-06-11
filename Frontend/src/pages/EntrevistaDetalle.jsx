@@ -127,8 +127,8 @@ export default function EntrevistaDetalle() {
                                         entrevista.estado === "realizada"
                                             ? "#d4edda"
                                             : entrevista.estado === "cancelada"
-                                              ? "#f8d7da"
-                                              : "#cfe2ff",
+                                                ? "#f8d7da"
+                                                : "#cfe2ff",
                                     borderRadius: "4px",
                                 }}
                             >
