@@ -5,6 +5,8 @@ import { useAuth } from "../context/AuthContext"
 export default function LoginPage() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [recuerdame, setRecuerdame] = useState(false)
+    
     const { login, error, cargando } = useAuth()
     const navigate = useNavigate()
 
@@ -19,51 +21,67 @@ export default function LoginPage() {
     }
 
     return (
-        <div style={{ padding: "2rem", maxWidth: "400px", margin: "2rem auto" }}>
-            <h1>Iniciar Sesión</h1>
-            <form onSubmit={handleSubmit}>
-                <div style={{ marginBottom: "1rem" }}>
-                    <label htmlFor="email">Email: </label>
-                    <input
-                        id="email"
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                        style={{ width: "100%", padding: "0.5rem" }}
-                    />
+        <div className="auth-container">
+            <div className="auth-card">
+                
+                <h1 style={{ textAlign: "center" }}>Iniciar Sesión</h1>
+                
+                {error && <div className="error-msg">{error}</div>}
+                
+                <form onSubmit={handleSubmit}>
+                    {/* Reemplazamos los labels por placeholders*/}
+                    <div style={{ marginBottom: "1rem" }}>
+                        <input
+                            id="email"
+                            type="email"
+                            placeholder="Nombre de usuario o Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
+                    </div>
+                    
+                    <div style={{ marginBottom: "1rem" }}>
+                        <input
+                            id="password"
+                            type="password"
+                            placeholder="Contraseña"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                    </div>
+
+                    {/* Agregamos el Checkbox de Recuérdame */}
+                    <div className="checkbox-container">
+                        <input
+                            type="checkbox"
+                            id="recuerdame"
+                            checked={recuerdame}
+                            onChange={(e) => setRecuerdame(e.target.checked)}
+                        />
+                        <label htmlFor="recuerdame" style={{ margin: 0, cursor: "pointer" }}>
+                            Recuérdame
+                        </label>
+                    </div>
+
+                    {/* El botón ahora usa la clase btn-glow para el efecto neón */}
+                    <button
+                        type="submit"
+                        className="btn-glow"
+                        disabled={cargando}
+                    >
+                        {cargando ? "Cargando..." : "Iniciar Sesión"}
+                    </button>
+                </form>
+                
+                {/* Aplicamos la clase auth-links solo para el registro */}
+                <div className="auth-links">
+                    <p style={{ fontSize: "0.9rem" }}>
+                        ¿No tenés cuenta? <Link to="/registro" style={{ fontWeight: "600" }}>Registrate acá</Link>
+                    </p>
                 </div>
-                <div style={{ marginBottom: "1rem" }}>
-                    <label htmlFor="password">Contraseña: </label>
-                    <input
-                        id="password"
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                        style={{ width: "100%", padding: "0.5rem" }}
-                    />
-                </div>
-                {error && <p style={{ color: "red" }}>{error}</p>}
-                <button
-                    type="submit"
-                    disabled={cargando}
-                    style={{
-                        width: "100%",
-                        padding: "0.75rem",
-                        backgroundColor: "#007bff",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "4px",
-                        cursor: "pointer",
-                    }}
-                >
-                    {cargando ? "Cargando..." : "Iniciar Sesión"}
-                </button>
-            </form>
-            <p style={{ marginTop: "1rem", textAlign: "center" }}>
-                ¿No tienes cuenta? <Link to="/registro">Regístrate aquí</Link>
-            </p>
+            </div>
         </div>
     )
 }

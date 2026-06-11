@@ -1,10 +1,12 @@
-import { Link, useNavigate } from "react-router-dom"
+import { NavLink, useNavigate } from "react-router-dom"
 import { useAuth } from "../context/AuthContext"
 
 export default function Navbar() {
-    const { usuario, logout, puedeGestionar, estaAutenticado } = useAuth()
+    // Traemos los datos del usuario y la función para cerrar sesión desde tu contexto
+    const { usuario, logout, puedeGestionar, estaAutenticado } = useAuth() 
     const navigate = useNavigate()
 
+    // Validación clave de seguridad: si no hay sesión, no mostramos nada
     if (!estaAutenticado) {
         return null
     }
@@ -15,59 +17,54 @@ export default function Navbar() {
     }
 
     return (
-        <nav
-            style={{
-                backgroundColor: "#2c3e50",
-                padding: "1rem 2rem",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-            }}
-        >
-            <div style={{ display: "flex", gap: "2rem" }}>
-                <Link
-                    to="/entrevistas"
-                    style={{
-                        color: "white",
-                        textDecoration: "none",
-                        fontWeight: "bold",
-                        fontSize: "1.2rem",
-                    }}
-                >
-                    📅 Entrevistas
-                </Link>
-                {puedeGestionar && (
-                    <Link
-                        to="/resumen"
-                        style={{
-                            color: "white",
-                            textDecoration: "none",
-                            fontWeight: "500",
-                        }}
-                    >
-                        📊 Resumen
-                    </Link>
-                )}
-            </div>
+        <nav>
+            <div className="nav-container">
+                
+                {/* Lado izquierdo: Los links de navegación */}
+                <div className="nav-links">
+                    {/* Usamos NavLink para que se pinte solo cuando estamos en esa ruta */}
+                    <NavLink to="/entrevistas" className="nav-link">
+                        🗓️ Entrevistas
+                    </NavLink>
+                    
+                    {/* El link de resumen solo aparece si es admin o rrhh */}
+                    {puedeGestionar && (
+                        <NavLink to="/resumen" className="nav-link">
+                            📊 Resumen
+                        </NavLink>
+                    )}
+                </div>
 
-            <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-                <span style={{ color: "white" }}>
-                    {usuario?.nombre} <span style={{ fontSize: "0.85rem", opacity: 0.8 }}>({usuario?.rol})</span>
-                </span>
-                <button
-                    onClick={handleLogout}
-                    style={{
-                        padding: "0.5rem 1rem",
-                        backgroundColor: "#e74c3c",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "4px",
-                        cursor: "pointer",
-                    }}
-                >
-                    Logout
-                </button>
+                {/* Lado derecho: Info del usuario y botón de salir */}
+                <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
+                    <div style={{ color: "var(--blanco)", fontSize: "0.9rem", fontWeight: 500, textAlign: "right" }}>
+                        {/* Mostramos el nombre, y el rol en color rosado */}
+                        <span>{usuario?.nombre || "Usuario"}</span>
+                        <span style={{ color: "var(--rosa)", marginLeft: "0.4rem", fontSize: "0.8rem", textTransform: "lowercase" }}>
+                            ({usuario?.rol || "rol"})
+                        </span>
+                    </div>
+                    
+                    <button 
+                        onClick={handleLogout}
+                        style={{ 
+                            padding: "0.4rem 1.2rem", 
+                            backgroundColor: "var(--magenta)", 
+                            color: "var(--blanco)", 
+                            border: "none", 
+                            borderRadius: "var(--radio)", 
+                            cursor: "pointer",
+                            fontWeight: "600",
+                            fontSize: "0.85rem",
+                            transition: "background 0.2s"
+                        }}
+                        onMouseEnter={(e) => e.target.style.backgroundColor = "var(--morado-oscuro)"}
+                        onMouseLeave={(e) => e.target.style.backgroundColor = "var(--magenta)"}
+                    >
+                        Logout
+                    </button>
+                </div>
+                
             </div>
         </nav>
     )

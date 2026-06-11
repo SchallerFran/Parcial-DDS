@@ -7,6 +7,7 @@ export default function RegisterPage() {
         nombre: "",
         email: "",
         password: "",
+        // Dejamos el rol por defecto clavado acá en el estado para que se envíe al backend
         rol: "entrevistador",
     })
     const { register, error, cargando } = useAuth()
@@ -22,6 +23,7 @@ export default function RegisterPage() {
     const handleSubmit = async (e) => {
         e.preventDefault()
         try {
+            // El backend recibe el rol "entrevistador" de forma transparente
             await register(form.nombre, form.email, form.password, form.rol)
             navigate("/login")
         } catch (err) {
@@ -30,79 +32,67 @@ export default function RegisterPage() {
     }
 
     return (
-        <div style={{ padding: "2rem", maxWidth: "400px", margin: "2rem auto" }}>
-            <h1>Registrarse</h1>
-            <form onSubmit={handleSubmit}>
-                <div style={{ marginBottom: "1rem" }}>
-                    <label htmlFor="nombre">Nombre: </label>
-                    <input
-                        id="nombre"
-                        name="nombre"
-                        type="text"
-                        value={form.nombre}
-                        onChange={handleChange}
-                        required
-                        style={{ width: "100%", padding: "0.5rem" }}
-                    />
-                </div>
-                <div style={{ marginBottom: "1rem" }}>
-                    <label htmlFor="email">Email: </label>
-                    <input
-                        id="email"
-                        name="email"
-                        type="email"
-                        value={form.email}
-                        onChange={handleChange}
-                        required
-                        style={{ width: "100%", padding: "0.5rem" }}
-                    />
-                </div>
-                <div style={{ marginBottom: "1rem" }}>
-                    <label htmlFor="password">Contraseña: </label>
-                    <input
-                        id="password"
-                        name="password"
-                        type="password"
-                        value={form.password}
-                        onChange={handleChange}
-                        required
-                        style={{ width: "100%", padding: "0.5rem" }}
-                    />
-                </div>
-                <div style={{ marginBottom: "1rem" }}>
-                    <label htmlFor="rol">Rol: </label>
-                    <select
-                        id="rol"
-                        name="rol"
-                        value={form.rol}
-                        onChange={handleChange}
-                        style={{ width: "100%", padding: "0.5rem" }}
+        <div className="auth-container">
+            <div className="auth-card">
+                
+                <h1 style={{ textAlign: "center" }}>Registrarse</h1>
+                
+                {error && <div className="error-msg">{error}</div>}
+                
+                <form onSubmit={handleSubmit}>
+                    <div style={{ marginBottom: "1rem" }}>
+                        <input
+                            id="nombre"
+                            name="nombre"
+                            type="text"
+                            placeholder="Nombre completo"
+                            value={form.nombre}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                    
+                    <div style={{ marginBottom: "1rem" }}>
+                        <input
+                            id="email"
+                            name="email"
+                            type="email"
+                            placeholder="Email"
+                            value={form.email}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                    
+                    {/* Le dimos un poco más de margen inferior (2rem) para compensar el espacio que dejó el Select */}
+                    <div style={{ marginBottom: "2rem" }}>
+                        <input
+                            id="password"
+                            name="password"
+                            type="password"
+                            placeholder="Contraseña"
+                            value={form.password}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+
+                    <button
+                        type="submit"
+                        className="btn-glow"
+                        disabled={cargando}
                     >
-                        <option value="entrevistador">Entrevistador</option>
-                        <option value="rrhh">RRHH</option>
-                        <option value="admin">Admin</option>
-                    </select>
+                        {cargando ? "Registrando..." : "Crear Cuenta"}
+                    </button>
+                </form>
+
+                <div className="auth-links">
+                    <p style={{ fontSize: "0.9rem" }}>
+                        ¿Ya tenés cuenta? <Link to="/login" style={{ fontWeight: "600" }}>Iniciá sesión acá</Link>
+                    </p>
                 </div>
-                {error && <p style={{ color: "red" }}>{error}</p>}
-                <button
-                    type="submit"
-                    disabled={cargando}
-                    style={{
-                        width: "100%",
-                        padding: "0.75rem",
-                        backgroundColor: "#28a745",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "4px",
-                        cursor: "pointer",
-                    }}
-                >
-                    {cargando ? "Registrando..." : "Registrarse"}
-                </button>
-            </form>
-            <p style={{ marginTop: "1rem", textAlign: "center" }}>
-                ¿Ya tienes cuenta? <Link to="/login">Inicia sesión aquí</Link>
-            </p>
+                
+            </div>
         </div>
     )
 }

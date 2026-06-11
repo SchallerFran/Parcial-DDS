@@ -25,71 +25,55 @@ export default function ResumenPage() {
         cargar()
     }, [])
 
-    if (cargando) {
-        return <div style={{ padding: "2rem" }}>Cargando resumen...</div>
-    }
+    if (cargando) return <div className="page" style={{ textAlign: "center", padding: "4rem" }}>Cargando dashboard...</div>
 
     if (error) {
         return (
-            <div style={{ padding: "2rem" }}>
-                <p style={{ color: "red" }}>{error}</p>
-                <Link to="/entrevistas" style={{ color: "#007bff" }}>← Volver a entrevistas</Link>
+            <div className="page">
+                <div className="error-msg">{error}</div>
+                <Link to="/entrevistas">← Volver a entrevistas</Link>
             </div>
         )
     }
 
-    if (!resumen) {
-        return <div style={{ padding: "2rem" }}>No hay datos disponibles</div>
-    }
+    if (!resumen) return <div className="page">No hay datos disponibles</div>
 
-    const topEntrevistador = resumen.porEntrevistador?.length
-        ? resumen.porEntrevistador.reduce((a, b) => (a.total > b.total ? a : b))
-        : null
-
-    return (
-        <div style={{ padding: "2rem" }}>
-            <h1>Panel de Resumen</h1>
-            <p style={{ color: "#666" }}>Acceso: Solo Admin/RRHH</p>
-
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1.5rem", marginTop: "2rem" }}>
-                <div style={{ padding: "1.5rem", backgroundColor: "#e7f3ff", borderRadius: "4px", borderLeft: "4px solid #007bff" }}>
-                    <h3>Entrevistas Hoy</h3>
-                    <p style={{ fontSize: "2rem", fontWeight: "bold", margin: "0.5rem 0 0 0" }}>{resumen.entrevistasDelDia ?? 0}</p>
-                </div>
-
-                <div style={{ padding: "1.5rem", backgroundColor: "#fff3cd", borderRadius: "4px", borderLeft: "4px solid #ffc107" }}>
-                    <h3>Postulantes en Proceso</h3>
-                    <p style={{ fontSize: "2rem", fontWeight: "bold", margin: "0.5rem 0 0 0" }}>{resumen.postulantesEnProceso ?? 0}</p>
-                </div>
-
-                <div style={{ padding: "1.5rem", backgroundColor: "#d4edda", borderRadius: "4px", borderLeft: "4px solid #28a745" }}>
-                    <h3>Entrevistas Realizadas</h3>
-                    <p style={{ fontSize: "2rem", fontWeight: "bold", margin: "0.5rem 0 0 0" }}>{resumen.entrevistasDelDia ?? 0}</p>
-                </div>
-
-                <div style={{ padding: "1.5rem", backgroundColor: "#f8d7da", borderRadius: "4px", borderLeft: "4px solid #dc3545" }}>
-                    <h3>Entrevistas Canceladas</h3>
-                    <p style={{ fontSize: "2rem", fontWeight: "bold", margin: "0.5rem 0 0 0" }}>{resumen.entrevistasCanceladas ?? 0}</p>
-                </div>
-
-                <div style={{ padding: "1.5rem", backgroundColor: "#f0f0f0", borderRadius: "4px", borderLeft: "4px solid #6c757d" }}>
-                    <h3>Total Entrevistadores</h3>
-                    <p style={{ fontSize: "2rem", fontWeight: "bold", margin: "0.5rem 0 0 0" }}>{resumen.porEntrevistador?.length ?? 0}</p>
-                </div>
-            </div>
-
-            {topEntrevistador && (
-                <div style={{ marginTop: "2rem", padding: "1.5rem", backgroundColor: "#f8f9fa", borderRadius: "4px" }}>
-                    <h3>Entrevistador con más entrevistas</h3>
-                    <p>
-                        <strong>{topEntrevistador.entrevistador?.nombre ?? `ID ${topEntrevistador.entrevistadorId}`}</strong>: {topEntrevistador.total} entrevistas
-                    </p>
-                </div>
-            )}
-
-            <Link to="/entrevistas" style={{ marginTop: "2rem", display: "inline-block", color: "#007bff", textDecoration: "none" }}>
-                ← Volver a entrevistas
-            </Link>
+    // Componente interno para las tarjetas de estadísticas
+    const StatCard = ({ title, value, colorClass }) => (
+        <div className="card" style={{ borderLeft: `6px solid var(${colorClass})` }}>
+            <h3 style={{ fontSize: "0.85rem", color: "var(--gris-texto)", marginBottom: "0.5rem", textTransform: "uppercase" }}>{title}</h3>
+            <p style={{ fontSize: "2.5rem", fontWeight: "700", color: "var(--morado-oscuro)" }}>{value}</p>
         </div>
     )
-}
+
+    return (
+        <div className="page">
+            <h1 style={{ marginBottom: "2rem" }}>Panel de Resumen</h1>
+            <div style={{ 
+                display: "flex", 
+                gap: "1rem", 
+                justifyContent: "flex-start", 
+                flexWrap: "nowrap", /* Evita que salten a la siguiente línea */
+                overflowX: "auto"   /* Por si en pantallas chicas el contenido desborda, scroll lateral */
+            }}>
+                <div style={{ flex: "1" }}><StatCard title="Entrevistas Hoy" value={resumen.entrevistasDelDia ?? 0} colorClass="--rosa" /></div>
+                <div style={{ flex: "1" }}><StatCard title="En Proceso" value={resumen.postulantesEnProceso ?? 0} colorClass="--magenta" /></div>
+                <div style={{ flex: "1" }}><StatCard title="Realizadas" value={resumen.entrevistasRealizadas ?? 0} colorClass="--verde-exito" /></div>
+                <div style={{ flex: "1" }}><StatCard title="Canceladas" value={resumen.entrevistasCanceladas ?? 0} colorClass="--rojo-error" /></div>
+                <div style={{ flex: "1" }}><StatCard title="Entrevistadores" value={resumen.porEntrevistador?.length ?? 0} colorClass="--morado" /></div>
+            </div>
+
+            <div style={{ marginTop: "2rem" }}>
+                {/* Lo dejamos como un link simple, sin la clase de botón */}
+                <Link to="/entrevistas" style={{ 
+                    color: "var(--morado-oscuro)", 
+                    fontWeight: "600", 
+                    textDecoration: "underline",
+                    cursor: "pointer"
+                }}>
+                    ← Volver a entrevistas
+                </Link>
+            </div>
+        </div>
+    )
+}   
