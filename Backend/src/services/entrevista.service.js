@@ -85,7 +85,7 @@ export const listar = async ({
             { model: Postulante, as: 'postulante' },
             { model: Usuario, as: 'entrevistador', attributes: ['id', 'nombre', 'email'] }
         ],
-        order: [[sortBy, order]],
+        order: [[sortBy, order]], 
         limit: Number(limit),
         offset: (Number(page) - 1) * Number(limit)
     })

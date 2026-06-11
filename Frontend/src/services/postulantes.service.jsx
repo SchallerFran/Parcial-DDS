@@ -24,12 +24,6 @@ const postulantesService = {
         const { data } = await api.put(`/postulantes/${id}`, cambios)
         return data
     },
-
-    // Cambiar estado del postulante
-    async cambiarEstado(id, nuevoEstado) {
-        const { data } = await api.patch(`/postulantes/${id}/estado`, { estado: nuevoEstado })
-        return data
-    },
 }
 
 export default postulantesService

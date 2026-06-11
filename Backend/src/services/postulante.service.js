@@ -48,4 +48,14 @@ const eliminar = async (id) => {
   await postulante.destroy()
 }
 
-export default { listar, obtenerPorId, crear, actualizar, eliminar }
+const ESTADOS_VALIDOS = ['nuevo', 'en_proceso', 'rechazado', 'contratado']
+
+const cambiarEstado = async (id, nuevoEstado) => {
+  if (!nuevoEstado || !ESTADOS_VALIDOS.includes(nuevoEstado)) {
+    throw { status: 400, message: `Estado inválido. Debe ser uno de: ${ESTADOS_VALIDOS.join(', ')}` }
+  }
+  const postulante = await obtenerPorId(id)
+  return postulante.update({ estado: nuevoEstado })
+}
+
+export default { listar, obtenerPorId, crear, actualizar, eliminar, cambiarEstado }

@@ -4,9 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "start": "node src/server.js",
+    "start": "node --env-file=.env src/server.js",
     "dev": "node --env-file=.env --watch src/server.js",
-    "sync": "node src/config/sync.js",
+    "sync": "node --env-file=.env src/config/sync.js",
+    "seed": "node --env-file=.env src/config/seed.js",
     "lint": "eslint .",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },

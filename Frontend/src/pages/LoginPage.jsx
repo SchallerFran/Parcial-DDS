@@ -64,19 +64,6 @@ export default function LoginPage() {
             <p style={{ marginTop: "1rem", textAlign: "center" }}>
                 ¿No tienes cuenta? <Link to="/registro">Regístrate aquí</Link>
             </p>
-
-            {/* Info de prueba */}
-            <div style={{ marginTop: "2rem", padding: "1rem", backgroundColor: "#f0f0f0", borderRadius: "4px" }}>
-                <p style={{ fontSize: "0.9rem", margin: 0 }}>
-                    <strong>Credenciales de prueba (MOCK):</strong>
-                </p>
-                <p style={{ fontSize: "0.9rem", margin: "0.5rem 0 0 0" }}>
-                    Email: <code>fati@test.com</code>
-                </p>
-                <p style={{ fontSize: "0.9rem", margin: "0.25rem 0 0 0" }}>
-                    Password: <code>123456</code>
-                </p>
-            </div>
         </div>
     )
 }

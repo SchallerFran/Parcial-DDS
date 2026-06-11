@@ -53,8 +53,18 @@ const eliminar = async (req, res, next) => {
   }
 }
 
+const cambiarEstado = async (req, res, next) => {
+  try {
+    const postulante = await postulanteService.cambiarEstado(req.params.id, req.body.estado)
+    res.status(200).json(postulante)
+  } catch (err) {
+    next(err)
+  }
+}
+
 export { listar, 
         obtenerPorId, 
         crear, 
         actualizar, 
-         eliminar }
+        eliminar,
+        cambiarEstado }
