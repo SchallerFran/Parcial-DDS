@@ -173,13 +173,9 @@ export default function EntrevistaForm() {
                         <label htmlFor="postulanteId">Postulante: *</label>
                         <select id="postulanteId" name="postulanteId" value={form.postulanteId} onChange={handleChange}>
                             <option value="">Seleccionar postulante...</option>
-                        {postulantes
-                        .filter(p => p.estado === "en_proceso" || p.estado === "nuevo")
-                        .map((p) => (
-                            <option key={p.id} value={p.id}>
-                            {p.nombre} ({p.estado})
-                            </option>
-                        ))}
+                            {postulantes.map((p) => (
+                                <option key={p.id} value={p.id}>{p.nombre} ({p.estado})</option>
+                            ))}
 
                         </select>
                         {errores.postulanteId && <span style={{ color: "#991B1B", fontSize: "0.85rem" }}>{errores.postulanteId}</span>}
